@@ -1,4 +1,4 @@
-# 🌸 Aksadipa – Aplikasi Perpustakaan Digital 📚
+<img width="2880" height="1800" alt="image" src="https://github.com/user-attachments/assets/7cb4ca31-e635-4822-9e95-af7513672ccf" /># 📘 Aksadipa – Aplikasi Perpustakaan Digital 📚
 
 > Sebuah aplikasi perpustakaan digital berbasis Laravel yang dirancang untuk mempermudah pengelolaan buku, peminjaman, dan pengguna dalam satu sistem yang modern dan terstruktur.
 
@@ -23,7 +23,7 @@ Project ini cocok digunakan untuk:
 
 * 👑 Admin
 * 🧑‍💼 Petugas
-* 👤 User / Peminjam
+* 🙎🏻 User / Peminjam
 
 ---
 
@@ -162,22 +162,8 @@ http://127.0.0.1:8000
 
 | Role  | Email                                     | Password |
 | ----- | ----------------------------------------- | -------- |
-| Admin | [admin@gmail.com](mailto:admin@gmail.com) | password |
-| User  | [user@gmail.com](mailto:user@gmail.com)   | password |
-
-*(sesuaikan dengan seeder di project jika berbeda)*
-
----
-
-## 📸 Screenshot (Opsional)
-
-> Kamu bisa tambahkan screenshot aplikasi di sini nanti
-> Contoh:
-
-* Dashboard Admin
-* Halaman Buku
-* Halaman Peminjaman
-* Scan Kode
+| Admin | [admin@gmail.com](mailto:admin@gmail.com) | admin123 |
+| User  | [user1@gmail.com](mailto:user@gmail.com)  | 123456   |
 
 ---
 
