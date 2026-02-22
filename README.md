@@ -1,59 +1,205 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🌸 Aksadipa – Aplikasi Perpustakaan Digital 📚
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+> Sebuah aplikasi perpustakaan digital berbasis Laravel yang dirancang untuk mempermudah pengelolaan buku, peminjaman, dan pengguna dalam satu sistem yang modern dan terstruktur.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## ✨ Tentang Project
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Aksadipa adalah aplikasi perpustakaan digital yang dikembangkan menggunakan framework Laravel.
+Aplikasi ini dibuat untuk membantu admin, petugas, dan pengguna dalam mengelola proses peminjaman buku secara digital, cepat, dan efisien.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Project ini cocok digunakan untuk:
 
-## Learning Laravel
+* Sistem perpustakaan sekolah
+* Project tugas akhir / portofolio
+* Sistem manajemen buku digital
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+---
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 🖥️ Tampilan Fitur Utama
 
-## Laravel Sponsors
+🎯 Sistem memiliki beberapa role:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+* 👑 Admin
+* 🧑‍💼 Petugas
+* 👤 User / Peminjam
 
-### Premium Partners
+---
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## 🚀 Fitur Unggulan
 
-## Contributing
+### 📚 Manajemen Buku
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+* Tambah, edit, hapus data buku
+* ISBN buku
+* Kategori buku
+* Cover buku
 
-## Code of Conduct
+### 👥 Manajemen Pengguna
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+* Login & Register
+* Role user (Admin, Petugas, User)
+* Edit profil & avatar
 
-## Security Vulnerabilities
+### 📖 Sistem Peminjaman
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+* Peminjaman buku digital
+* Kode peminjaman (scan code)
+* Durasi pinjam fleksibel
+* Status pinjaman (Dipinjam / Dikembalikan)
+* Denda keterlambatan
 
-## License
+### ❤️ Fitur User
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+* Favorit buku
+* Lihat detail buku
+* Riwayat peminjaman
+* Dashboard user
+
+### 📊 Laporan & Admin Panel
+
+* Laporan peminjaman
+* Export laporan
+* Dashboard statistik
+* Manajemen kategori buku
+
+---
+
+## 🛠️ Teknologi yang Digunakan
+
+| Teknologi        | Keterangan               |
+| ---------------- | ------------------------ |
+| Laravel          | Framework Backend (PHP)  |
+| MySQL            | Database                 |
+| Blade            | Template Engine          |
+| CSS & JavaScript | Frontend                 |
+| XAMPP            | Local Development Server |
+| Git & GitHub     | Version Control          |
+
+---
+
+## 📂 Struktur Project (Singkat)
+
+```
+app/            -> Controller & Logic
+resources/      -> Tampilan Blade
+routes/         -> Routing Web
+database/       -> Migration & Seeder
+public/         -> Asset (CSS, Image)
+storage/        -> File Storage
+```
+
+---
+
+## ⚙️ Cara Instalasi & Menjalankan Project
+
+Ikuti langkah ini dengan lembut ya 🌼
+
+### 1️⃣ Clone Repository
+
+```bash
+git clone https://github.com/erlyta/Aksadipa_Perpustakaan.git
+```
+
+### 2️⃣ Masuk ke Folder Project
+
+```bash
+cd Aksadipa_Perpustakaan
+```
+
+### 3️⃣ Install Dependency
+
+```bash
+composer install
+```
+
+### 4️⃣ Copy File Environment
+
+```bash
+cp .env.example .env
+```
+
+### 5️⃣ Generate App Key
+
+```bash
+php artisan key:generate
+```
+
+### 6️⃣ Atur Database
+
+* Buka phpMyAdmin (XAMPP)
+* Buat database baru (misal: perpustakaan)
+* Sesuaikan file `.env`:
+
+```
+DB_DATABASE=perpustakaan
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+### 7️⃣ Migrasi Database
+
+```bash
+php artisan migrate --seed
+```
+
+### 8️⃣ Jalankan Server Laravel
+
+```bash
+php artisan serve
+```
+
+Lalu buka di browser:
+
+```
+http://127.0.0.1:8000
+```
+
+---
+
+## 🔐 Akun Default (Seeder)
+
+| Role  | Email                                     | Password |
+| ----- | ----------------------------------------- | -------- |
+| Admin | [admin@gmail.com](mailto:admin@gmail.com) | password |
+| User  | [user@gmail.com](mailto:user@gmail.com)   | password |
+
+*(sesuaikan dengan seeder di project jika berbeda)*
+
+---
+
+## 📸 Screenshot (Opsional)
+
+> Kamu bisa tambahkan screenshot aplikasi di sini nanti
+> Contoh:
+
+* Dashboard Admin
+* Halaman Buku
+* Halaman Peminjaman
+* Scan Kode
+
+---
+
+## 🎓 Tujuan Pengembangan
+
+Project ini dikembangkan sebagai:
+
+* Project pembelajaran Laravel
+* Portofolio pengembangan web
+* Sistem informasi perpustakaan digital berbasis web
+
+---
+
+## 👩‍💻 Developer
+
+**Erlyta** 💗
+SMK – Project Aplikasi Perpustakaan Digital
+Tahun: 2026
+
+---
+
+## ⭐ Penutup
+
+Terima kasih telah mengunjungi repository ini.
+Semoga project ini bermanfaat dan dapat menjadi inspirasi dalam pengembangan aplikasi berbasis Laravel yang elegan dan fungsional.
