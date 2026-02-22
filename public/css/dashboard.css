@@ -1,0 +1,283 @@
+:root {
+    --primary-color: #1e3c72;
+    --primary-dark: #0f172a;
+    --secondary-color: #ffb703;
+    --danger-color: #ef4444;
+    --success-color: #22c55e;
+    --warning-color: #f59e0b;
+
+    --light-bg: #eef2f7;
+    --white: #ffffff;
+    --border-color: rgba(15, 23, 42, 0.08);
+
+    --text-dark: #1f2937;
+    --text-gray: #334155;
+    --text-light: #94a3b8;
+
+    --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
+    --shadow-md: 0 4px 10px rgba(15, 23, 42, 0.08);
+    --shadow-lg: 0 16px 32px rgba(15, 23, 42, 0.12);
+}
+
+/* Petugas sekarang pakai tema admin (default), jadi tidak ada override khusus. */
+
+* {
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--light-bg);
+}
+
+.app-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* ================= SIDEBAR ================= */
+.sidebar {
+    width: 280px;
+    background: linear-gradient(180deg, #0f172a 0%, #1e3c72 55%, #223b73 100%);
+    border-right: 1px solid rgba(255,255,255,0.08);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    box-shadow: var(--shadow-md);
+}
+
+/* Petugas sekarang pakai sidebar admin (default). */
+
+/* LOGO */
+.sidebar-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    font-size: 20px;
+    font-weight: 700;
+    color: #f8fafc;
+
+    margin-bottom: 28px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid rgba(255,255,255,0.12);
+}
+
+.sidebar-logo span {
+    transition: color 0.2s ease;
+}
+
+.sidebar-logo:hover span {
+    color: #e2e8f0;
+}
+
+/* LOGO IMAGE */
+.logo-img {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+    flex-shrink: 0;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.25));
+}
+
+/* MENU */
+.sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex-grow: 1;
+}
+
+.sidebar-menu li {
+    margin-bottom: 8px;
+}
+
+.sidebar-menu a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    padding: 12px 16px;
+    border-radius: 12px;
+
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 500;
+    color: rgba(248, 250, 252, 0.85);
+
+    transition: all 0.25s ease;
+}
+
+.sidebar-menu a i {
+    font-size: 18px;
+}
+
+/* HOVER */
+.sidebar-menu a:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+    transform: translateX(3px);
+}
+
+/* ACTIVE */
+.sidebar-menu li.active a {
+    background: rgba(255, 183, 3, 0.18);
+    color: #ffffff;
+    border: 1px solid rgba(255, 183, 3, 0.4);
+    box-shadow: var(--shadow-md);
+}
+
+/* Petugas sekarang pakai active state admin (default). */
+
+/* LOGOUT */
+.logout-form {
+    margin-top: auto;
+}
+
+.logout-form button {
+    width: 100%;
+    padding: 10px 16px;
+
+    border: none;
+    border-radius: 10px;
+    background: rgba(239, 68, 68, 0.15);
+    color: #fecaca;
+    border: 1px solid rgba(239, 68, 68, 0.35);
+    font-weight: 600;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.logout-form button:hover {
+    background: rgba(239, 68, 68, 0.25);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+/* ================= CONTENT ================= */
+.content {
+    flex: 1;
+    padding: 32px;
+    overflow-y: auto;
+}
+
+.content h4 {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 24px;
+}
+
+/* DASHBOARD HEADER */
+.dashboard-header {
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 2px solid var(--light-bg);
+}
+
+.dashboard-header h3 {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 6px;
+}
+
+.dashboard-header small {
+    color: var(--text-light);
+}
+
+.greeting {
+    margin-top: 12px;
+    display: inline-block;
+
+    padding: 10px 14px;
+    border-radius: 10px;
+
+    background: #eef2ff;
+    color: var(--text-gray);
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* ================= STAT CARD ================= */
+.stat-card {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 24px;
+
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-md);
+
+    min-height: 130px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    transition: all 0.25s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary-color);
+}
+
+.stat-card small {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-light);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.stat-card h3 {
+    margin: 0;
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 768px) {
+
+    .app-container {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        padding: 16px;
+    }
+
+    .sidebar-logo {
+        font-size: 18px;
+        margin-bottom: 20px;
+    }
+
+    .content {
+        padding: 20px;
+    }
+
+    .stat-card h3 {
+        font-size: 24px;
+    }
+
+    .dashboard-header h3 {
+        font-size: 20px;
+    }
+}
