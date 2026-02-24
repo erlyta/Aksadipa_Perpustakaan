@@ -143,7 +143,7 @@ class LoanController extends Controller
 
         $dueAt = $durationUnit === 'hour'
             ? $confirmedAt->copy()->addHours($durationValue)
-            : $confirmedAt->copy()->addDays($durationValue);
+            : $confirmedAt->copy()->addDays($durationValue)->endOfDay();
 
         $loan->status = 'dipinjam';
         $loan->loan_date = $confirmedAt->toDateString();
@@ -173,14 +173,8 @@ class LoanController extends Controller
         $dueDate = $this->resolveDueDate($loan);
         $lateDays = 0;
 
-        if ($dueDate && $returnedDate->greaterThan($dueDate)) {
-            $durationUnit = $loan->duration_unit ?? 'day';
-            if ($durationUnit === 'hour') {
-                $lateHours = max(1, $dueDate->diffInHours($returnedDate));
-                $lateDays = (int) ceil($lateHours / 24);
-            } else {
-                $lateDays = max(1, (int) floor($dueDate->diffInDays($returnedDate)));
-            }
+        if ($dueDate) {
+            $lateDays = $this->calculateLateDays($loan, $dueDate, $returnedDate);
         }
 
         $finePerDay = 1000;
@@ -234,7 +228,7 @@ class LoanController extends Controller
         }
 
         if ($loan->loan_date && $loan->duration_days) {
-            return Carbon::parse($loan->loan_date)->addDays((int) $loan->duration_days)->startOfDay();
+            return Carbon::parse($loan->loan_date)->addDays((int) $loan->duration_days)->endOfDay();
         }
 
         if ($loan->return_date) {
@@ -268,7 +262,7 @@ class LoanController extends Controller
 
         $dueAt = !empty($validated['due_at'])
             ? Carbon::parse($validated['due_at'])
-            : $loanStartAt->copy()->addDays($durationValue);
+            : $loanStartAt->copy()->addDays($durationValue)->endOfDay();
 
         if (empty($validated['due_at']) && $durationUnit === 'hour') {
             $dueAt = $loanStartAt->copy()->addHours($durationValue);
@@ -285,5 +279,26 @@ class LoanController extends Controller
         }
 
         return $validated;
+    }
+
+    private function calculateLateDays(Loan $loan, Carbon $dueDate, Carbon $endAt): int
+    {
+        $durationUnit = $loan->duration_unit ?? 'day';
+        if ($durationUnit === 'hour') {
+            if ($endAt->lte($dueDate)) {
+                return 0;
+            }
+
+            $lateHours = max(1, $dueDate->diffInHours($endAt));
+            return (int) ceil($lateHours / 24);
+        }
+
+        $dueDay = $dueDate->copy()->startOfDay();
+        $endDay = $endAt->copy()->startOfDay();
+        if ($endDay->lte($dueDay)) {
+            return 0;
+        }
+
+        return (int) $dueDay->diffInDays($endDay);
     }
 }

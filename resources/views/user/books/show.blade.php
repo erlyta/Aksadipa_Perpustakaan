@@ -24,21 +24,26 @@
         white-space: nowrap;
         display: inline-flex;
         align-items: center;
-        gap: 8px;
-        padding: 8px 14px;
-        border: 1px solid rgba(30, 60, 114, 0.2);
-        border-radius: 999px;
-        background: rgba(30, 60, 114, 0.06);
-        color: #1e3c72;
+        gap: 6px;
+        padding: 8px 13px;
+        border: 1px solid rgba(15, 23, 42, 0.1);
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.75);
+        backdrop-filter: blur(6px);
+        color: #1f2937;
         font-weight: 600;
+        font-size: 14px;
         text-decoration: none;
         line-height: 1;
-        transition: all .2s ease;
+        box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+        transition: transform .15s ease, box-shadow .15s ease, background-color .15s ease, border-color .15s ease, color .15s ease;
     }
     .detail-back-btn:hover {
-        color: #17325e;
-        border-color: rgba(30, 60, 114, 0.35);
-        background: rgba(30, 60, 114, 0.12);
+        color: #0f172a;
+        border-color: rgba(30, 60, 114, 0.25);
+        background: #ffffff;
+        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.12);
+        transform: translateY(-1px);
         text-decoration: none;
     }
     .detail-kicker {
@@ -196,6 +201,42 @@
         color: #0f172a;
         margin-bottom: 4px;
     }
+    .reviews-box {
+        margin-top: 16px;
+        border: 1px solid rgba(15, 23, 42, 0.08);
+        border-radius: 14px;
+        background: #f8fafc;
+        padding: 14px;
+    }
+    .reviews-summary {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 10px;
+        color: #f59e0b;
+        font-size: 14px;
+    }
+    .review-item {
+        padding: 10px 0;
+        border-top: 1px solid rgba(15, 23, 42, 0.08);
+    }
+    .review-item:first-of-type {
+        border-top: 0;
+        padding-top: 0;
+    }
+    .review-meta {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+        color: #64748b;
+        margin-bottom: 4px;
+    }
+    .review-text {
+        color: #334155;
+        font-size: 13px;
+        white-space: pre-line;
+    }
     @media (max-width: 991.98px) {
         .detail-header {
             grid-template-columns: 1fr;
@@ -258,6 +299,35 @@
 
             <div class="synopsis-box">
                 {{ $book->synopsis ?? 'Deskripsi belum tersedia.' }}
+            </div>
+            <div class="reviews-box">
+                @php
+                    $avgRating = $book->reviews_avg_rating ? round((float) $book->reviews_avg_rating, 1) : null;
+                    $reviewCount = (int) ($book->reviews_count ?? 0);
+                    $filledStars = $avgRating ? (int) round($avgRating) : 0;
+                @endphp
+                <div class="reviews-summary">
+                    @for($i = 1; $i <= 5; $i++)
+                        <i class="bi {{ $i <= $filledStars ? 'bi-star-fill' : 'bi-star' }}"></i>
+                    @endfor
+                    <strong style="color:#0f172a;">
+                        {{ $avgRating ? $avgRating . '/5' : 'Belum ada rating' }}
+                    </strong>
+                    <span style="color:#64748b;">({{ $reviewCount }} ulasan)</span>
+                </div>
+
+                @forelse($book->reviews->take(5) as $review)
+                    <div class="review-item">
+                        <div class="review-meta">
+                            <strong>{{ optional($review->user)->full_name ?? 'Pengguna' }}</strong>
+                            <span>-</span>
+                            <span>{{ $review->rating }}/5</span>
+                        </div>
+                        <div class="review-text">{{ $review->comment ?: 'Tanpa komentar.' }}</div>
+                    </div>
+                @empty
+                    <div class="review-text">Belum ada komentar untuk buku ini.</div>
+                @endforelse
             </div>
             <div class="detail-actions">
                 <a

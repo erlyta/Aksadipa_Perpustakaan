@@ -82,7 +82,8 @@
     }
     .hero-stat strong {
         font-size: 24px;
-        color: #ffffff;\n        text-shadow: 0 2px 10px rgba(15, 23, 42, 0.35);
+        color: #ffffff;
+        text-shadow: 0 2px 10px rgba(15, 23, 42, 0.35);
     }
     .hero-stat span {
         color: #d6e0f5;
@@ -175,10 +176,10 @@
         background: #f3f4f6;
     }
     .book-meta {
-        padding: 12px 14px 6px;
+        padding: 12px 14px 10px;
         display: flex;
         flex-direction: column;
-        gap: 6px;
+        gap: 8px;
         flex: 1;
         font-family: "Space Grotesk", sans-serif;
     }
@@ -190,11 +191,23 @@
         font-size: 15px;
         line-height: 1.35;
         letter-spacing: -0.2px;
+        min-height: 40px;
+    }
+    .book-title a {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
     }
     .book-author {
         color: #5b677a;
         font-size: 13px;
         line-height: 1.5;
+        min-height: 20px;
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
     }
     .book-chip {
         display: inline-block;
@@ -212,6 +225,7 @@
         gap: 8px;
         flex-wrap: wrap;
         align-items: center;
+        margin-top: 2px;
     }
     .stock-pill {
         display: inline-flex;
@@ -228,20 +242,9 @@
         background: rgba(239, 68, 68, 0.14);
         color: #b91c1c;
     }
-    .book-rating {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        font-size: 12.5px;
-        color: #f59e0b;
-        font-family: "Space Grotesk", sans-serif;
-        margin-top: 4px;
-    }
-    .book-rating .muted {
-        color: #94a3b8;
-    }
     .book-actions {
-        padding: 8px 14px 14px;
+        padding: 0 14px 14px;
+        margin-top: auto;
         font-family: "Space Grotesk", sans-serif;
     }
     .book-actions .btn-success-custom,
@@ -360,13 +363,6 @@
                                 <i class="bi bi-box-seam"></i>
                                 {{ $book->stock > 0 ? $book->stock . ' tersedia' : 'Habis' }}
                             </span>
-                        </div>
-                        <div class="book-rating">
-                            <i class="bi bi-star"></i>
-                            <i class="bi bi-star"></i>
-                            <i class="bi bi-star"></i>
-                            <i class="bi bi-star"></i>
-                            <i class="bi bi-star"></i>
                         </div>
                     </div>
                     <div class="book-actions">

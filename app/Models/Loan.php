@@ -56,7 +56,7 @@ class Loan extends Model
         }
 
         if (!$dueAt && $this->loan_date && $this->duration_days) {
-            $dueAt = Carbon::parse($this->loan_date)->addDays((int) $this->duration_days)->startOfDay();
+            $dueAt = Carbon::parse($this->loan_date)->addDays((int) $this->duration_days)->endOfDay();
         }
 
         if (!$dueAt) {
@@ -66,15 +66,9 @@ class Loan extends Model
         $endAt = ($isReturned && $this->return_date)
             ? Carbon::parse($this->return_date)
             : now();
-        if ($endAt->lte($dueAt)) {
+        $lateDays = $this->calculateLateDays($dueAt, $endAt);
+        if ($lateDays <= 0) {
             return 0;
-        }
-
-        if (($this->duration_unit ?? 'day') === 'hour') {
-            $lateHours = max(1, $dueAt->diffInHours($endAt));
-            $lateDays = (int) ceil($lateHours / 24);
-        } else {
-            $lateDays = max(1, (int) floor($dueAt->diffInDays($endAt)));
         }
 
         return $lateDays * self::FINE_PER_DAY;
@@ -101,7 +95,7 @@ class Loan extends Model
         }
 
         if (!$dueAt && $this->loan_date && $this->duration_days) {
-            $dueAt = Carbon::parse($this->loan_date)->addDays((int) $this->duration_days)->startOfDay();
+            $dueAt = Carbon::parse($this->loan_date)->addDays((int) $this->duration_days)->endOfDay();
         }
 
         if (!$dueAt) {
@@ -114,16 +108,27 @@ class Loan extends Model
             ? Carbon::parse($this->return_date)
             : now();
 
-        if ($endAt->lte($dueAt)) {
-            return 0;
-        }
+        return $this->calculateLateDays($dueAt, $endAt);
+    }
 
+    private function calculateLateDays(Carbon $dueAt, Carbon $endAt): int
+    {
         if (($this->duration_unit ?? 'day') === 'hour') {
+            if ($endAt->lte($dueAt)) {
+                return 0;
+            }
+
             $lateHours = max(1, $dueAt->diffInHours($endAt));
             return (int) ceil($lateHours / 24);
         }
 
-        return (int) max(1, floor($dueAt->diffInDays($endAt)));
+        $dueDay = $dueAt->copy()->startOfDay();
+        $endDay = $endAt->copy()->startOfDay();
+        if ($endDay->lte($dueDay)) {
+            return 0;
+        }
+
+        return (int) $dueDay->diffInDays($endDay);
     }
 
     public function user()
@@ -134,5 +139,10 @@ class Loan extends Model
     public function book()
     {
         return $this->belongsTo(Book::class);
+    }
+
+    public function review()
+    {
+        return $this->hasOne(BookReview::class);
     }
 }

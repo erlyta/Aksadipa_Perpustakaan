@@ -91,15 +91,13 @@
                     value="Otomatis diisi saat admin/petugas konfirmasi"
                     readonly
                 >
-                <small class="text-muted d-block mt-1">Jam pengembalian dihitung otomatis dari waktu konfirmasi.</small>
+                <small class="text-muted d-block mt-1">Jam konfirmasi dicatat sistem, tapi masa pinjam tetap dihitung per hari.</small>
             </div>
 
             <div class="form-group">
                 <label for="duration_unit">Jenis Durasi <span style="color: #ef4444;">*</span></label>
-                <select id="duration_unit" name="duration_unit" required>
-                    <option value="day" {{ old('duration_unit', 'day') === 'day' ? 'selected' : '' }}>Per Hari</option>
-                    <option value="hour" {{ old('duration_unit') === 'hour' ? 'selected' : '' }}>Per Jam</option>
-                </select>
+                <input type="hidden" id="duration_unit" name="duration_unit" value="day">
+                <input type="text" class="form-control" value="Per Hari" readonly>
                 @error('duration_unit')
                     <small style="color: #ef4444; display: block; margin-top: 4px;">{{ $message }}</small>
                 @enderror
@@ -132,26 +130,4 @@
         </form>
     </div>
 </div>
-<script>
-    (function () {
-        const unitEl = document.getElementById('duration_unit');
-        const valueEl = document.getElementById('duration_value');
-        const labelEl = document.getElementById('duration_value_label');
-        if (!unitEl || !valueEl || !labelEl) return;
-
-        function syncDurationInput() {
-            const isHour = unitEl.value === 'hour';
-            labelEl.innerHTML = isHour
-                ? 'Durasi (jam) <span style="color: #ef4444;">*</span>'
-                : 'Durasi (hari) <span style="color: #ef4444;">*</span>';
-            valueEl.max = isHour ? '72' : '365';
-            if (Number(valueEl.value || 0) > Number(valueEl.max)) {
-                valueEl.value = valueEl.max;
-            }
-        }
-
-        unitEl.addEventListener('change', syncDurationInput);
-        syncDurationInput();
-    })();
-</script>
 @endsection

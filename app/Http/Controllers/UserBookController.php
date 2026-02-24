@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Book;
 use App\Models\Loan;
 use App\Models\Favorite;
+use App\Models\BookReview;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -14,14 +15,24 @@ class UserBookController extends Controller
 {
     public function index()
     {
-        $books = Book::with('category')->orderBy('title')->get();
+        $books = Book::with('category')
+            ->orderBy('title')
+            ->get();
         $favoriteBookIds = Favorite::where('user_id', Auth::id())->pluck('book_id')->toArray();
         return view('user.books.index', compact('books', 'favoriteBookIds'));
     }
 
     public function show(Book $book)
     {
-        $book->load('category');
+        $book->load([
+            'category',
+            'reviews' => function ($query) {
+                $query->with('user')->latest();
+            },
+        ]);
+        $book->loadAvg('reviews', 'rating');
+        $book->loadCount('reviews');
+
         $isFavorite = Favorite::where('user_id', Auth::id())
             ->where('book_id', $book->id)
             ->exists();
@@ -76,6 +87,15 @@ class UserBookController extends Controller
         }
 
         $loan->load('book.category');
+
+        $review = null;
+        if ($loan->book_id) {
+            $review = BookReview::where('user_id', Auth::id())
+                ->where('book_id', $loan->book_id)
+                ->first();
+        }
+        $loan->setRelation('review', $review);
+
         return view('user.loans.show', compact('loan'));
     }
 
@@ -114,6 +134,53 @@ class UserBookController extends Controller
         return redirect()->route('user.loans.index')->with('success', 'Permintaan pengembalian dikirim.');
     }
 
+    public function submitReview(Request $request, Loan $loan)
+    {
+        if ($loan->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        if (!in_array($loan->status, ['dikembalikan', 'terlambat'], true)) {
+            return redirect()->route('user.loans.show', $loan->id)
+                ->with('success', 'Ulasan hanya bisa diberikan setelah pengembalian dikonfirmasi.');
+        }
+
+        if (!$loan->book_id) {
+            return redirect()->route('user.loans.show', $loan->id)
+                ->with('success', 'Buku tidak tersedia untuk diberi ulasan.');
+        }
+
+        $validated = $request->validate([
+            'rating' => 'required|integer|min:1|max:5',
+            'comment' => 'nullable|string|max:1000',
+        ]);
+
+        $existingReview = BookReview::where('user_id', Auth::id())
+            ->where('book_id', $loan->book_id)
+            ->first();
+
+        $payload = [
+            'rating' => $validated['rating'],
+            'comment' => !empty(trim((string) ($validated['comment'] ?? '')))
+                ? trim((string) $validated['comment'])
+                : null,
+        ];
+
+        if ($existingReview) {
+            $existingReview->update($payload);
+        } else {
+            BookReview::create([
+                'loan_id' => $loan->id,
+                'book_id' => $loan->book_id,
+                'user_id' => Auth::id(),
+                ...$payload,
+            ]);
+        }
+
+        return redirect()->route('user.loans.show', $loan->id)
+            ->with('success', 'Rating dan komentar berhasil disimpan.');
+    }
+
     public function createLoan(Request $request)
     {
         $books = Book::with('category')->orderBy('title')->get();
@@ -130,20 +197,13 @@ class UserBookController extends Controller
         $validated = $request->validate([
             'book_id' => 'required|exists:books,id',
             'loan_date' => 'required|date',
-            'duration_unit' => 'required|in:day,hour',
+            'duration_unit' => 'required|in:day',
             'duration_value' => 'required|integer|min:1|max:365',
         ]);
 
-        if (
-            ($validated['duration_unit'] === 'day' && (int) $validated['duration_value'] > 365) ||
-            ($validated['duration_unit'] === 'hour' && (int) $validated['duration_value'] > 72)
-        ) {
-            $message = $validated['duration_unit'] === 'day'
-                ? 'Durasi hari maksimal 365.'
-                : 'Durasi jam maksimal 72.';
-
+        if ((int) $validated['duration_value'] > 365) {
             throw \Illuminate\Validation\ValidationException::withMessages([
-                'duration_value' => $message,
+                'duration_value' => 'Durasi hari maksimal 365.',
             ]);
         }
 

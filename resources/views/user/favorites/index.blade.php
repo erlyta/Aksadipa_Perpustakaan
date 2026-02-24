@@ -101,6 +101,8 @@
         transition: transform .2s ease, box-shadow .2s ease;
         animation: rise .5s ease both;
         position: relative;
+        max-width: 220px;
+        margin: 0;
     }
     .favorite-card-inner {
         display: flex;

@@ -55,6 +55,7 @@ Route::middleware(['checklogin', 'role:peminjam'])->group(function () {
     Route::post('/user/loans', [UserBookController::class, 'storeLoan'])->name('user.loans.store');
     Route::delete('/user/loans/{loan}', [UserBookController::class, 'cancelLoan'])->name('user.loans.cancel');
     Route::post('/user/loans/{loan}/return', [UserBookController::class, 'requestReturn'])->name('user.loans.return');
+    Route::post('/user/loans/{loan}/review', [UserBookController::class, 'submitReview'])->name('user.loans.review');
     Route::get('/user/profile', [UserProfileController::class, 'edit'])->name('user.profile.edit');
     Route::put('/user/profile', [UserProfileController::class, 'update'])->name('user.profile.update');
 });
@@ -73,8 +74,21 @@ Route::middleware(['checklogin', 'role:admin,petugas'])->group(function () {
             ->orWhere(function ($query) use ($now) {
                 $query->whereIn('status', ['dipinjam', 'menunggu'])
                     ->where(function ($overdue) use ($now) {
-                        $overdue->whereNotNull('due_at')
-                            ->where('due_at', '<', $now)
+                        $overdue->where(function ($dueAtQuery) use ($now) {
+                                $dueAtQuery->whereNotNull('due_at')
+                                    ->where(function ($byUnit) use ($now) {
+                                        $byUnit->where(function ($dayLoan) use ($now) {
+                                            $dayLoan->where(function ($q) {
+                                                    $q->where('duration_unit', 'day')
+                                                        ->orWhereNull('duration_unit');
+                                                })
+                                                ->whereDate('due_at', '<', $now->toDateString());
+                                        })->orWhere(function ($hourLoan) use ($now) {
+                                            $hourLoan->where('duration_unit', 'hour')
+                                                ->where('due_at', '<', $now);
+                                        });
+                                    });
+                            })
                             ->orWhere(function ($fallback) use ($now) {
                                 $fallback->whereNull('due_at')
                                     ->whereNotNull('loan_date')

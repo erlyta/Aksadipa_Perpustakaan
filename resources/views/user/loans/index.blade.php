@@ -150,14 +150,14 @@
                         </td>
                         <td>
                             @if($loan->loan_start_at)
-                                {{ \Carbon\Carbon::parse($loan->loan_start_at)->format('Y-m-d H:i') }}
+                                {{ \Carbon\Carbon::parse($loan->loan_start_at)->toDateString() }}
                             @else
                                 {{ $loan->loan_date }}
                             @endif
                         </td>
                         <td>
                             @if($dueAt)
-                                {{ $durationUnit === 'hour' ? $dueAt->format('Y-m-d H:i') : $dueAt->toDateString() }}
+                                {{ $dueAt->toDateString() }}
                             @else
                                 {{ $loan->return_date ?? '-' }}
                             @endif

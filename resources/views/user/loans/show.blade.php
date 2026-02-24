@@ -5,6 +5,35 @@
 @push('styles')
 <link rel="stylesheet" href="{{ asset('css/books.css') }}">
 <style>
+    .detail-back-btn {
+        justify-self: end;
+        align-self: center;
+        width: auto;
+        white-space: nowrap;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 13px;
+        border: 1px solid rgba(15, 23, 42, 0.1);
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.75);
+        backdrop-filter: blur(6px);
+        color: #1f2937;
+        font-weight: 600;
+        font-size: 14px;
+        text-decoration: none;
+        line-height: 1;
+        box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+        transition: transform .15s ease, box-shadow .15s ease, background-color .15s ease, border-color .15s ease, color .15s ease;
+    }
+    .detail-back-btn:hover {
+        color: #0f172a;
+        border-color: rgba(30, 60, 114, 0.25);
+        background: #ffffff;
+        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.12);
+        transform: translateY(-1px);
+        text-decoration: none;
+    }
     .loan-detail-wrap {
         display: grid;
         grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
@@ -59,7 +88,8 @@
     .status-dipinjam { background: #e0f2fe; color: #0369a1; }
     .status-menunggu { background: #fef3c7; color: #92400e; }
     .status-menunggu_kembali { background: #fde68a; color: #92400e; }
-    .status-selesai { background: #dcfce7; color: #166534; }
+    .status-dikembalikan { background: #dcfce7; color: #166534; }
+    .status-terlambat { background: #fee2e2; color: #991b1b; }
 
     .loan-info-grid {
         display: grid;
@@ -110,6 +140,25 @@
         font-size: 12px;
         color: #667085;
     }
+    .review-card {
+        margin-top: 16px;
+        padding: 16px;
+        border: 1px solid rgba(15, 23, 42, 0.08);
+        border-radius: 14px;
+        background: #f8fafc;
+    }
+    .review-stars {
+        color: #f59e0b;
+        font-size: 14px;
+        display: inline-flex;
+        gap: 2px;
+    }
+    .review-comment {
+        margin-top: 8px;
+        color: #475467;
+        font-size: 13px;
+        white-space: pre-line;
+    }
     @media (max-width: 992px) {
         .loan-detail-wrap {
             grid-template-columns: 1fr;
@@ -123,7 +172,7 @@
     @php
         $durationUnit = $loan->duration_unit ?? 'day';
         $durationValue = $loan->duration_value ?? $loan->duration_days ?? 0;
-        $durationText = $durationValue . ' ' . ($durationUnit === 'hour' ? 'jam' : 'hari');
+        $durationText = $durationValue . ' hari';
 
         $loanStartAt = $loan->loan_start_at
             ? \Carbon\Carbon::parse($loan->loan_start_at)
@@ -135,20 +184,18 @@
         if (!$dueAt && $durationValue) {
             $startAtForDue = $loanStartAt ?: ($loan->loan_date ? \Carbon\Carbon::parse($loan->loan_date)->startOfDay() : null);
             if ($startAtForDue) {
-                $dueAt = $durationUnit === 'hour'
-                    ? $startAtForDue->copy()->addHours((int) $durationValue)
-                    : $startAtForDue->copy()->addDays((int) $durationValue);
+                $dueAt = $startAtForDue->copy()->addDays((int) $durationValue)->endOfDay();
             }
         }
         if (!$dueAt && $loan->loan_date && $loan->duration_days) {
-            $dueAt = \Carbon\Carbon::parse($loan->loan_date)->addDays($loan->duration_days);
+            $dueAt = \Carbon\Carbon::parse($loan->loan_date)->addDays($loan->duration_days)->endOfDay();
         }
 
         $startText = $loanStartAt
-            ? ($durationUnit === 'hour' ? $loanStartAt->format('Y-m-d H:i') : $loanStartAt->toDateString())
+            ? $loanStartAt->toDateString()
             : '-';
         $dueText = $dueAt
-            ? ($durationUnit === 'hour' ? $dueAt->format('Y-m-d H:i') : $dueAt->toDateString())
+            ? $dueAt->toDateString()
             : ($loan->return_date ?? '-');
 
         $statusRaw = $loan->status ?? '-';
@@ -162,7 +209,7 @@
             <div class="text-muted mt-1">Informasi lengkap peminjamanmu.</div>
         </div>
         <div class="page-header-actions">
-            <a href="{{ route('user.loans.index') }}" class="btn btn-outline-primary rounded-pill px-4">
+            <a href="{{ route('user.loans.index') }}" class="detail-back-btn">
                 <i class="bi bi-arrow-left"></i> Kembali
             </a>
         </div>
@@ -235,6 +282,53 @@
                     <span class="text-muted">Menunggu konfirmasi pengembalian dari petugas.</span>
                 @endif
             </div>
+
+            @if(in_array(($loan->status ?? ''), ['dikembalikan', 'terlambat'], true))
+                <div class="review-card">
+                    <h5 class="mb-3">Rating dan Komentar</h5>
+
+                    @if($loan->review)
+                        <div class="mb-0">
+                            <div class="review-stars">
+                                @for($i = 1; $i <= 5; $i++)
+                                    <i class="bi {{ $i <= (int) $loan->review->rating ? 'bi-star-fill' : 'bi-star' }}"></i>
+                                @endfor
+                            </div>
+                            <div class="review-comment">
+                                {{ $loan->review->comment ?: 'Tanpa komentar.' }}
+                            </div>
+                        </div>
+                    @else
+                        <form action="{{ route('user.loans.review', $loan->id) }}" method="POST">
+                            @csrf
+                            <div class="mb-3">
+                                <label for="rating" class="form-label">Rating</label>
+                                <select id="rating" name="rating" class="form-control" required>
+                                    <option value="">Pilih rating</option>
+                                    @for($i = 1; $i <= 5; $i++)
+                                        <option value="{{ $i }}" {{ (int) old('rating') === $i ? 'selected' : '' }}>
+                                            {{ $i }} bintang
+                                        </option>
+                                    @endfor
+                                </select>
+                                @error('rating')
+                                    <small class="text-danger">{{ $message }}</small>
+                                @enderror
+                            </div>
+                            <div class="mb-3">
+                                <label for="comment" class="form-label">Komentar</label>
+                                <textarea id="comment" name="comment" class="form-control" rows="4" maxlength="1000" placeholder="Tulis pengalaman membaca buku ini...">{{ old('comment') }}</textarea>
+                                @error('comment')
+                                    <small class="text-danger">{{ $message }}</small>
+                                @enderror
+                            </div>
+                            <button type="submit" class="btn-success-custom">
+                                <i class="bi bi-send-check"></i> Simpan Ulasan
+                            </button>
+                        </form>
+                    @endif
+                </div>
+            @endif
         </div>
 
         <div class="loan-card">
